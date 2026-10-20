@@ -23,9 +23,11 @@
 
 **TF-IDF**یک کلمه که در هر سند ظاهر می شود غیر اطلاعاتی است، پس آن را کاهش دهید. یک کلمه نادر در سراسر corpus اما مکرر در یک سند است سیگنال، پس آن را افزایش دهید.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 کجا`TF`در این سند فرکانس اصطلاح است.`df`فرکانس سند (چه تعداد اسناد حاوی کلمه است) است.`N`این اسناد کل هستند.`log`وزن رو به کلمات همه جا محدود مي کنه
