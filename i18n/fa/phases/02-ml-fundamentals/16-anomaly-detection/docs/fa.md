@@ -82,7 +82,7 @@ flowchart TD
 
 ### روش Z-Score
 
-ساده ترین روش: متوسط و انحراف استاندارد هر ویژگی را محاسبه کنید. هر نقطه بیش از k انحراف استاندارد از متوسط را نشان دهید.
+ساده ترین روش: متوسط و انحراف استاندارد هر ویژگی را محاسبه کنید.$k$انحرافات استاندارد از میانگین.
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 نمره ناهنجاری بر اساس طول مسیر متوسط در تمام درختان است، که با طول مسیر انتظار می رود یک درخت جستجوی دوگانه تصادفی عادی می شود:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-کجا`c(n)`طول مسیر انتظار می رود برای نمونه های n. امتیاز نزدیک به 1 به معنای ناهنجاری است. امتیاز نزدیک به 0.5 به معنای طبیعی است. امتیاز نزدیک به 0 به معنای بسیار طبیعی است (در خوشه های کثیف).
+کجا`c(n)`طول مسیر انتظار می رود برای $n$نمره ها. نمره نزدیک به 1 به معنای ناهنجاری است. نمره نزدیک به 0.5 به معنای طبیعی است. نمره نزدیک به 0 به معنای بسیار طبیعی است (در خوشه های کثیف).
 
 **Strengths:**هیچ فرضیه توزیع ای وجود ندارد. در ابعاد بالا کار می کند. مقیاس خوب (به عنوان نمونه زیر خطی است زیرا هر درخت از یک زیر نمونه استفاده می کند). انواع ویژگی های مخلوط را اداره می کند.
 
@@ -168,7 +168,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 LOF تراکم محلی در اطراف یک نقطه را با تراکم اطراف همسایگان خود مقایسه می کند. یک نقطه در یک منطقه نادر و احاطه شده توسط مناطق تراکم غیر معمول است.
 
 **How it works:**
-1. برای هر نقطه، نزدیک ترین همسایه های k را پیدا کنید
+1. برای هر نقطه، پیدا کنید$k$نزدیک ترین همسایه ها
 2. تراکم دسترسی محلی را محاسبه کنید (چه تراکم محله است)
 3. تراکم هر نقطه را با تراکم همسایه ها مقایسه کنید
 4. اگر نقطه ای تراکم بسیار کمتری نسبت به همسایگانش داشته باشد، یک نقطه غیر قابل تشخیص است
@@ -182,7 +182,7 @@ LOF تراکم محلی در اطراف یک نقطه را با تراکم اط�
 
 **Strengths:**تشخیص ناهنجاری های محلی (نقطه هایی که در محله خود غیر معمول هستند، حتی اگر در سطح جهانی غیر معمول نباشند)
 
-**Weaknesses:**در مجموعه داده های بزرگ کند (O  n ^ 2) برای پیاده سازی ساده) حساس به انتخاب k. در ابعاد بسیار بالا خوب کار نمی کند (لعنت ابعاد بر محاسبه فاصله تأثیر می گذارد).
+**Weaknesses:**در مجموعه داده های بزرگ آهسته ($O(n^2)$برای اجرای ساده) حساس به انتخاب$k$. در ابعاد خیلی بالا خوب کار نمی کنه (لعنت ابعاد بر محاسبه فاصله تاثیر می گذارد).
 
 ### مقایسه
 
@@ -199,7 +199,7 @@ LOF تراکم محلی در اطراف یک نقطه را با تراکم اط�
 
 - **Extreme class imbalance.**با 0.1 درصد ناهنجاری، پیش بینی "عادي" برای همه چیز 99.9 درصد دقت را می دهد.
 - **AUROC is misleading.**با عدم تعادل شدید، AUROC حتی زمانی که مدل بیشتر ناهنجاری ها را در حد عملی از دست می دهد، می تواند خوب به نظر برسد.
-- **Better metrics:**Precision@k (از موارد بالا k نشان داده شده، چند انحراف واقعی وجود دارد) AUPRC (مناطق زیر منحنی بازخواهی دقیق) و بازخواهی با نرخ مثبت غلط ثابت.
+- **Better metrics:**Precision@k (از بالا)$k$موارد نشان داده شده، چند انحراف واقعی وجود دارد) AUPRC (مناطق تحت منحنی بازپس گیری دقیق) و بازپس گیری با نرخ مثبت غلط ثابت.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-عامل عادی سازی`c(n)`طول مسیر انتظار می رود از یک جستجوی ناموفق در یک درخت جستجو دوگانه با n عنصر است. برابر است `2 * H(n-1) - 2*(n-1)/n`کجا`H`این نرمال سازی تضمین می کند که نمرات در مجموعه داده های اندازه های مختلف قابل مقایسه باشند.
+عامل عادی سازی`c(n)`طول مسیر انتظار می رود از یک جستجوی ناموفق در یک درخت جستجو دوگانه با $n$عناصر. برابر است`2 * H(n-1) - 2*(n-1)/n`کجا`H`این نرمال سازی تضمین می کند که نمرات در مجموعه داده های اندازه های مختلف قابل مقایسه باشند.
 
 ### سناریوهای دمو
 
@@ -433,7 +433,7 @@ predictions = oc_svm.predict(X_test)
 
 2. **Multivariate anomalies.**ایجاد داده های 2D که هر ویژگی به صورت جداگانه طبیعی به نظر می رسد، اما ترکیبی غیرمعمول است (به عنوان مثال، نقاط دور از دیگاکال کلستر اصلی). نشان دهید که نمره Z هر ویژگی از این موارد غافل می شود اما جنگل انزوا آنها را می گیرد.
 
-3. **LOF from scratch.**فاکتور خارج از محل را با استفاده از k نزدیک ترین همسایه ها پیاده سازی کنید. با LocalOutlierFactor sklearn در همان داده ها مقایسه کنید. از k=10 و k=50 استفاده کنید - انتخاب k چگونه بر نتایج تاثیر می گذارد؟
+3. **LOF from scratch.**فاکتور خارج از محل را با استفاده از نزدیک ترین همسایه ها پیاده سازی کنید. با فاکتور خارج از محل sklearn در مورد همان داده ها مقایسه کنید. استفاده کنید $k=10$و$k=50$-- چطور انتخاب کنید$k$تاثیرات بر نتایج؟
 
 4. **Streaming anomaly detection.**تغییر دهنده Z-score را برای کار در یک تنظیم جریان: متوسط اجرا و متغیر را با ورود نقاط جدید (الگوریتم آنلاین ویلفورد) به روز کنید. مقایسه با گروه Z-score بر روی همان داده ها.
 
@@ -448,10 +448,10 @@ predictions = oc_svm.predict(X_test)
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## خواندن بیشتر
