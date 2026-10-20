@@ -49,15 +49,14 @@ flowchart TB
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 کجا`p_n`دقت n-گرام اصلاح شده است (تعداد کاهش یافته از n-گرام تولید شده که در هر مرجع ظاهر می شوند، به مجموع n-گرام تولید شده تقسیم می شود) و `BP`مجازات کوتاه مدت:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 نرم کردن برای نمونه های کوچک مورد نیاز است که برخی از آنها`p_n`اجرای از روش "چن و چیری 1" (برای هر عدد صفر 1 را به شماره و نامگذاری اضافه کنید) استفاده می کند که امن ترین پیش فرض برای رژیم های کم شمار است.
