@@ -50,8 +50,8 @@ flowchart LR
 
 بجاي عقب نشيني`(x, y)`به طور مستقیم، پیش بینی یک`H x W`نقشه گرما در هر نقطه کلید با یک نقطه گاسین در محل واقعی متمرکز شده است.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 در نتیجه گیری، argmax هر نقشه گرما محل کلید پیش بینی شده است.

@@ -86,8 +86,8 @@ RoIAlign ماسک AP را به صورت رایگان با 3 تا 4 امتیاز 
 
 ماسک آر-CNN چهار خسارت را به هم اضافه کرده:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`،`L_rpn_box` موضوعیت + بازپسین جعبه برای پیشنهادات RPN.
