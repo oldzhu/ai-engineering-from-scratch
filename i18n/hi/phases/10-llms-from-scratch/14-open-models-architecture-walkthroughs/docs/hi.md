@@ -52,8 +52,8 @@
 
 LayerNorm औसत घटाता है, std, पैमाने, और शिफ्ट द्वारा विभाजित। RMSNorm केवल पैमाने को रखता हैः
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 कोई औसत घटाव नहीं। कोई पूर्वाग्रह नहीं। प्रति टोकन एक मैमूल कम। Zhang और Sennrich (2019) ने तर्क दिया कि यह मशीन अनुवाद पर LayerNorm से मेल खाता है जबकि 10% तेज़ है। हर आधुनिक खुला मॉडल इसे चलाता है।
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 जीपीटी-2 की एमएलपी है `x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) सक्रियण को एक बंद उत्पाद से बदल देता हैः
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 एक के बजाय समानांतर दो प्रोजेक्शन, स्विश सक्रियण द्वारा गॉट किए गए। पैरामीटर प्रति भ्रम पर अनुभवजन्य रूप से मजबूत। Llama 2 ने इसे अपनाया, सभी ने इसका पालन किया। MLP का छिपा आकार आमतौर पर सेट किया जाता है ताकि कुल पैरामीटर की गिनती मूल घने MLP से मेल खाएः यदि GPT-2 का उपयोग किया गया था`ff_dim = 4 * hidden`, SwiGLU का उपयोग करता है `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`. .
@@ -90,7 +90,7 @@ GPT-2 का प्रयोग किया गया **Multi-Head Attention (M
 
 **Multi-Query Attention (MQA, Shazeer 2019)**सभी सिरों पर एक K और एक V साझा करता है। KV कैश को num_heads द्वारा काटता है, जो एक विशिष्ट मॉडल पर 12x से 32x तक की कमी है। हार्ड बेंचमार्क पर सटीकता थोड़ी गिर जाती है।
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**मध्य बिंदु हैः Q सिरों के G समूह एक K और एक V साझा करते हैं। Llama 3 8B 32 Q सिरों और 8 KV सिरों (G=8) के साथ GQA का उपयोग करता है, इसलिए KV कैश पूर्ण MHA के मुकाबले 4x छोटा होता है।
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**मध्यस्थता है: $G$Q सिरों के समूह एक K और एक V साझा करते हैं। Llama 3 8B 32 Q सिरों और 8 KV सिरों के साथ GQA का उपयोग करता है ($G=8$), तो KV कैश 4x पूर्ण MHA के मुकाबले कम हो जाता है।
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**यह एक साझा कम रैंक वाले लटेंट में K और V को संपीड़ित करता है, जिससे उन्हें प्रति सिर वापस प्रक्षेपित किया जाता है। यह प्रति सिर अभिव्यक्तिशीलता को बनाए रखते हुए KV कैश को और कम करता है। डीपसेक-वी 2 और वी 3 अपने लंबे संदर्भ प्रदर्शन के लिए इस पर निर्भर करते हैं।
 
@@ -226,7 +226,7 @@ kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
            * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
 ```
 
-स्पार्क-एक्स2.5 4बी प्रत्येक पूर्ण-ध्यान परत के लिए तीन स्लाइडिंग विंडो परतों (डब्ल्यू = 512) चलाता हैः 9 पूर्ण और 27 36 में से स्लाइडिंग। इसके 1M-token संदर्भ में जो BF16 में प्रति अनुक्रम लगभग 38.7 GB (36 GiB) है। यदि सभी 36 परतें पूर्ण संदर्भ को कैश करती हैं तो यह 154.6 जीबी (144 जीबी) होगी। पूर्ण परतें लगभग पूरी लागत लेती हैं, यही कारण है कि पूर्ण से स्लाइडिंग परतों का अनुपात लंबे संदर्भ मॉडल पर पहले पढ़ने के लिए संख्या है।
+स्पार्क-एक्स2.5 4बी तीन स्लाइडिंग विंडो परतों ($W = 512$) प्रत्येक पूर्ण-ध्यान परत के लिएः 9 पूर्ण और 27 36 से स्लाइडिंग। इसके 1M-टोकन संदर्भ में जो BF16 में क्रम में लगभग 38.7 GB (36 GiB) है। यदि सभी 36 परतों ने पूर्ण संदर्भ को कैश किया तो यह 154.6 GB (144 GiB) होगा। पूर्ण परतें लगभग पूरी लागत लेती हैं, यही कारण है कि पूर्ण से स्लाइडिंग परतों का अनुपात लंबी-संदर्भ मॉडल पर सबसे पहले पढ़ने वाली संख्या है।
 
 ### जब प्रत्येक मॉडल जीतता है
 
@@ -296,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## आगे पढ़ना
