@@ -52,8 +52,8 @@ Todo lo demás (hora de aprendizaje, mezcla de datos, tamaño de lote, longitud 
 
 LayerNorm restará la media, dividida por std, escalas y cambios.
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 Ninguna subtracción media. Ningún sesgo. Un matmul menos por token. Zhang y Sennrich (2019) argumentaron que coincide con LayerNorm en la traducción automática mientras es un 10% más rápido.
@@ -78,8 +78,8 @@ Cada Llama, Mistral, Qwen, DeepSeek y Gemma utiliza RoPE. Gemma 2 utiliza un hí
 
 La MLP de GPT-2 es `x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) sustituye la activación por un producto cerrado:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 Dos proyecciones en paralelo en lugar de una, cerradas por la activación Swish. Empiricamente más fuerte en la perplejidad por parámetro. Llama 2 lo adoptó, todos lo siguieron. El tamaño oculto del MLP se establece generalmente para que el número total de parámetros coincida con el MLP denso original: si se utilizó GPT-2 `ff_dim = 4 * hidden`, SwiGLU utiliza `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`¿ Qué ?
@@ -90,7 +90,7 @@ Se utilizó el GPT-2 **Multi-Head Attention (MHA)**Cada cabeza tiene su propia p
 
 **Multi-Query Attention (MQA, Shazeer 2019)**El modelo de K-head tiene un K y un V en todas las cabezas. Cortar el cache de KV por num_heads, que es una reducción de 12 a 32 veces en un modelo típico.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**es el punto medio: los grupos G de cabezas Q comparten una K y una V. Llama 3 8B utiliza GQA con 32 cabezas Q y 8 cabezas KV (G=8), por lo que la caché KV se reduce 4x frente a la MHA completa.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**es el punto medio: $G$Los grupos de cabezas Q comparten una K y una V. Llama 3 8B utiliza GQA con 32 cabezas Q y 8 cabezas KV ($G=8$), por lo que el caché KV se reduce 4x frente a la MHA completa.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**El sistema de búsqueda de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de datos de datos de base de datos de datos de datos de base de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos
 
@@ -226,7 +226,7 @@ kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
            * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
 ```
 
-Spark-X2.5 4B ejecuta tres capas de ventana deslizante (W = 512) para cada capa de atención completa: 9 completas y 27 deslizantes de 36. En su contexto de 1M-token que es de aproximadamente 38.7 GB (36 GiB) por secuencia en BF16. Si las 36 capas almacenaran en caché el contexto completo sería de 154,6 GB (144 GiB). Las capas completas representan casi todo el coste, por lo que la relación entre las capas completas y las capas deslizantes es el número que debe leerse primero en un modelo de contexto largo.
+Spark-X2.5 4B tiene tres capas de ventanas deslizantes ($W = 512$En su contexto de 1M-token que es de aproximadamente 38,7 GB (36 GiB) por secuencia en BF16. si todas las 36 capas almacenaran en caché el contexto completo sería de 154,6 GB (144 GiB). Las capas completas cargan casi todo el costo, por lo que la relación de capas completas a las capas deslizantes es el número que se lee primero en un modelo de contexto largo.
 
 ### Cuando cada modelo gana
 
@@ -296,7 +296,7 @@ Esta lección produce`outputs/skill-open-model-picker.md`. Dado un objetivo de i
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## Leer más
