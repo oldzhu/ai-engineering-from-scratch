@@ -52,8 +52,8 @@
 
 LayerNorm يخص متوسط، وينقسم بواسطة std، مقياس، وتحركات. RMSNorm يحتفظ فقط بالمقياس:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 لا يعني الحد من النسب. لا يوجد تحيز. واحد من الممل أقل لكل رمز. جادل Zhang و Sennrich (2019) أنه يطابق LayerNorm على الترجمة الآلية مع أن يكون أسرع بنسبة 10%. كل نموذج مفتوح حديث يعمل عليه.
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 المخططات المختلفة لـ GPT-2 هي`x -> gelu(xW1 + b1) -> (...)W2 + b2`. يُستبدل SwiGLU (Shazeer 2020) التفعيل بمنتج مغلق:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 تمت إعداد مقياسات متوازية بدلاً من مقياس واحد، وتتوافق مع عملية تنشيط سويش. أقوى تجريبياً على التعقيد لكل مبرمج. اعتمدت Llama 2 ، اتبعها الجميع. يتم تحديد حجم المبرمج المخبأ عادةً بحيث يطابق عدد المبرمجات الكلي مع MLP الكثيفة الأصلية: إذا استخدم GPT-2`ff_dim = 4 * hidden`, SwiGLU يستخدم `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`. . .
@@ -90,7 +90,7 @@ GPT-2 المستخدم **Multi-Head Attention (MHA)**كل رأس لديه مشه
 
 **Multi-Query Attention (MQA, Shazeer 2019)**يشارك K و V على جميع الرؤوس. يقطع cache KV من قبل عدد_رؤوس، وهو خفض 12x إلى 32x على نموذج نموذجي. ينخفض الدقة قليلا على مقارنات صعبة.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**هو المنتصف: مجموعات G من رؤوس Q تشارك واحدة K و واحدة V. Llama 3 8B تستخدم GQA مع 32 رؤوس Q و 8 رؤوس KV (G = 8 ، لذلك مخزن KV يقلل 4x مقابل كامل MHA.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**هو الوسط:$G$المجموعات من رؤوس Q تشارك واحدة K و V واحد. Llama 3 8B تستخدم GQA مع 32 رؤوس Q و 8 رؤوس KV ($G=8$(), لذلك مخزن KV يقلل 4x مقابل كامل MHA.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**يضغط K و V إلى متبادل متخفي منخفض الرتب ، مما يعيد إلقاءهم إلى أعلى لكل رأس. يقلل من مخزن KV مع الحفاظ على التعبير لكل رأس. يعتمد DeepSeek-V2 و V3 على هذا لأداءها في السياق الطويل.
 
@@ -226,7 +226,7 @@ kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
            * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
 ```
 
-تعمل Spark-X2.5 4B على ثلاث طبقات من النافذة المنزلقة (W = 512) لكل طبقة كاملة من الاهتمام: 9 كاملة و 27 من 36 مسترعاً. في سياق 1M-البرمجة التي هي حوالي 38.7 جيجابايت (36 جيجابايت) لكل تسلسل في BF16. إذا كانت جميع الطبقات الـ 36 تخزن السياق الكامل سيكون 154.6 جيجابايت (144 جيجابايت). تحتوي الطبقات الكاملة على تكلفة كاملة تقريباً، ولهذا السبب يكون نسبة الطبقات الكاملة إلى الطبقات المنزلقة هو العدد الذي يجب قراءته أولاً على نموذج سياق طويل.
+يستخدم Spark-X2.5 4B ثلاث طبقات من النافذة المنزلقة ($W = 512$) لكل طبقة كاملة من الاهتمام: 9 كاملة و 27 ينزلق من 36. في سياق 1M-token الذي هو حوالي 38.7 GB (36 GiB) لكل تسلسل في BF16. إذا كانت جميع الطبقات 36 حفظ السياق الكامل سيكون 154.6 GB (144 GiB). الطبقات الكاملة تحمل تقريبا كل التكلفة، وهذا هو السبب في أن نسبة الطبقات الكاملة إلى الطبقات المنزلقة هي الرقم الذي يجب قراءته أولا على نموذج سياق طويل.
 
 ### عندما يفوز كل نموذج
 
@@ -296,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## المزيد من القراءة
