@@ -52,8 +52,8 @@ Tudo o resto (hora de aprendizagem, mix de dados, tamanho do lote, comprimento d
 
 LayerNorm subtrai a média, dividiu por std, escalas e mudanças.
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 Não há subtração média. Não há viés. Um matmul menos por token. Zhang e Sennrich (2019) argumentaram que corresponde ao LayerNorm na tradução automática, sendo 10% mais rápido.
@@ -78,8 +78,8 @@ Cada Llama, Mistral, Qwen, DeepSeek e Gemma usa RoPE. Gemma 2 usa um híbrido (R
 
 O MLP do GPT-2 é `x -> gelu(xW1 + b1) -> (...)W2 + b2`O SwiGLU (Shazeer 2020) substitui a ativação por um produto fechado:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 Duas projeções em paralelo em vez de uma, fechadas pela ativação Swish. Empiricamente mais forte em perplexidade por parâmetro. Llama 2 adotou, todos seguiram. O tamanho oculto do MLP é geralmente definido para que o número total de parâmetros coincida com o MLP denso original: se GPT-2 foi usado `ff_dim = 4 * hidden`, SwiGLU utiliza `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`- Não .
@@ -90,7 +90,7 @@ GPT-2 utilizado **Multi-Head Attention (MHA)**Cada cabeça tem a sua própria pr
 
 **Multi-Query Attention (MQA, Shazeer 2019)**O sistema de cache KV é dividido em números, que é uma redução de 12x a 32x em um modelo típico.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**é o meio: grupos G de cabeças Q compartilham um K e um V. Llama 3 8B usa GQA com 32 cabeças Q e 8 cabeças KV (G=8), de modo que o cache KV encolhe 4x em relação ao MHA completo.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**é o meio: $G$Os grupos de cabeças Q compartilham um K e um V. Llama 3 8B utiliza GQA com 32 cabeças Q e 8 cabeças KV ($G=8$), o cache KV reduz-se 4x em relação ao MHA completo.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**Compressos de K e V em um latente de baixo nível compartilhado, projetando-os de volta para cima por cabeça. Reduz ainda mais o cache KV enquanto preserva a expressividade por cabeça.
 
@@ -226,7 +226,7 @@ kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
            * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
 ```
 
-O Spark-X2.5 4B opera três camadas de janela deslizante (W = 512) para cada camada de atenção plena: 9 completas e 27 deslizantes de 36. No seu contexto de 1M-token que é cerca de 38,7 GB (36 GiB) por sequência em BF16. Se todas as 36 camadas armazenarem em cache o contexto completo, seria de 154,6 GB (144 GiB). As camadas completas suportam quase todo o custo, razão pela qual a relação de camadas completas com camadas deslizantes é o número a ser lido primeiro num modelo de longo contexto.
+A Spark-X2.5 4B opera com três camadas de janela deslizante ($W = 512$A diferença entre as camadas completas e as 27 deslizantes é que, em seu contexto de 1M-token, é de cerca de 38,7 GB (36 GiB) por sequência no BF16.
 
 ### Quando cada modelo ganha
 
@@ -296,7 +296,7 @@ Esta lição produz`outputs/skill-open-model-picker.md`. Tendo em conta um objet
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## Mais leitura
