@@ -52,8 +52,8 @@
 
 层规则减小了平均值,分为std,尺度和转移.RMSNorm只保留了尺度:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 没有中减.没有偏见.每代币少了一个matmul.张和森尼里希 (2019) 认为它在机器翻译上匹配LayerNorm,同时速度更快10%.每一个现代开放模型都运行它.
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 GPT-2的MLP是`x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) 将激活取代一个封闭产品:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 两个平行投影而不是一个,被Swish激活关闭.对每个参数的困难性具有实验性强度.Llama 2采用它,每个人都遵循它.MLP的隐藏尺寸通常设置以使参数总数与原始密集MLP相匹配:如果使用GPT-2`ff_dim = 4 * hidden`滑使用`ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`现在,我们要去.
@@ -90,7 +90,7 @@ SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
 
 **Multi-Query Attention (MQA, Shazeer 2019)**通过数_heads,将KV缓存减小12x至32x,在典型模型上.在硬度基准上,精度略有下降.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**是中间线:Q头G组共享一个K和一个V. Llama 3 8B使用GQA,有32个Q头和8个KV头 (G=8),因此KV缓存缩小了4x对完全MHA.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**是中间的:$G$头组共享一个K和一个V. Llama 3 8B使用GQA,有32个Q头和8个KV头 ($G=8$),因此KV缓存缩小了4x与全MHA相比.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**通过将K和V压缩到共享的低级隐形中,将它们投影到每头上.进一步减少KV缓存,同时保持每头表达性.
 
@@ -226,7 +226,7 @@ kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
            * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
 ```
 
-对于每一个全重视层,Spark-X2.5 4B运行三个滑动窗口层 (W = 512):9个全重视层,27个滑动窗口. 在其1M代币背景下,BF16中每次序列约为38.7GB (36 GiB). 如果所有36层都存储了完整的语境,那么它将是154.6GB (144 GiB). 完全层几乎承担全部成本,这就是为什么在长文本模型上,全层与滑层的比例是首先要读的数量.
+光X2.5 4B运行三层滑动窗口 ($W = 512$) 每个全注意层:9个全,27个滑出36个.在BF16中的1M代号文本上,每序列约为38.7GB (36GiB).如果36个层都缓存了全文本,则将达到154.6GB (144GiB).全层几乎承担了全部成本,这就是为什么全层与滑落的比例是长文本模型上最先读取的数字.
 
 ### 每个模特都会赢得
 
@@ -296,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## 进一步阅读
