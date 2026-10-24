@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Componer las once lecciones anteriores (tokenizer, datos, pre-entrenamiento, escalado, SFT, RLHF, DPO, CAI, eval, cuantización, inferencia) en una única especificación de tubería reproducible
+- Componer las doce lecciones anteriores (dos lecciones de tokenización, datos, pre-entrenamiento, escalado, SFT, RLHF, DPO, CAI, eval, cuantización, inferencia) en una única especificación de tubería reproducible
 - Definir el contrato de artefacto entre etapas: lo que consume cada etapa, lo que produce y cómo la siguiente etapa verifica la entrada
 - Construir un orquestrador que rastrear experimentos, hashes artefactos, y puertas de envío decisiones en los umbrales de evaluación
 - Diseñar el plan de retroceso: qué artefactos son baratos para volver a usar, cuáles son caros y cuánto cuesta un puesto de control corrupto
