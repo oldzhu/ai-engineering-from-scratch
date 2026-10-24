@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Compõem as onze lições anteriores (tokenizer, dados, pré-formação, escalação, SFT, RLHF, DPO, CAI, eval, quantização, inferência) em uma única especificação de pipeline reprodutível
+- Compõem as doze lições anteriores (dois lições de tokenizer, dados, pré-formação, escalação, SFT, RLHF, DPO, CAI, eval, quantização, inferência) em uma única especificação de pipeline reprodutível
 - Defina o contrato de artefatos entre fases: o que cada etapa consome, o que produz e como a próxima fase verifica a entrada
 - Construir um orquestrador que acompanhe experimentos, hashes artefatos, e portas de embarque decisões em limiares de avaliação
 - Desenhar o plano de reestruturação: quais artefatos são baratos de reestruturar, quais caros e quanto custa um posto de controlo corrupto
