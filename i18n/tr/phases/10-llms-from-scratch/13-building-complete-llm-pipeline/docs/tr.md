@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- On bir önceki dersleri (tokenizer, veri, önceden eğitim, ölçekleme, SFT, RLHF, DPO, CAI, eval, kuantitasyon, sonuç) tek yeniden üretilebilir bir boru hattı spesifikasyonuna birleştirin.
+- On iki önceki dersleri (iki tokenizer ders, veriler, önceden eğitim, ölçeklendirme, SFT, RLHF, DPO, CAI, eval, quantization, inference) tek yeniden üretilebilir bir boru hattı spesifikasyonuna birleştirin.
 - Artifakt sözleşmesini aşamalar arasında tanımlayın: her aşama neyi tüketir, neyi üretir ve sonraki aşama girişleri nasıl doğruluyor
 - Deneyleri izleyen, eserleri hash eden ve değerlendirme eşiğinde kararları gönderen bir orkestrasyoncu oluşturun
 - Geri dönüş planını tasarlayın: Hangi eserlerin yeniden kullanımı ucuz, hangi eserlerin maliyeti yüksek ve bozuk bir kontrol noktasının maliyeti ne kadar
