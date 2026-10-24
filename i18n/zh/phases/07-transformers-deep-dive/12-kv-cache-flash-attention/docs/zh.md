@@ -26,32 +26,32 @@
 
 ### 预存计算
 
-每个解码器层,每个代币,每个头:
+每个解码器层,每一个代币,在所有KV头上:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-对于7B型号,有32层,32头,d_head=128,fp16:
+对于7B型号,有32层,32个头 (所有用于K和V),d_head=128,fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 对于Llama 3 70B (80层,d_head=128,GQA 8 KV头):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-这10GB是为什么Llama370B在128K环境中需要大部分40GBA100只为KV缓存在批量1.
+这一10GB的32K变得128K的40GB,这就是40GB的A100,仅仅用于KV缓存的批量1.
 
-**GQA is the KV-cache win.**只有64个头的MHA将是32GB.
+**GQA is the KV-cache win.**机机的64KV头大约8倍,大约80Gb在32K.
 
 拉取尺寸,看缓存尺寸移动. 按下序列长度或批量,看它在单个GPU上爆炸的速度:
 
@@ -123,6 +123,10 @@ flash-attention-memory
 ```
 
 ## 建立它
+
+```figure
+iso-machine {"machine":"kv-cache"}
+```
 
 看到`code/main.py`我们实施:
 
