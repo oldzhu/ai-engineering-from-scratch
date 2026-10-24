@@ -26,32 +26,32 @@
 
 ### KV مخزن ریاضی
 
-در هر لایه دیکودر، در هر توکن، در هر سر:
+هر لایه ی دیکودر، هر توکن، در تمام سرای KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-برای یک مدل 7B با 32 لایه، 32 سر، d_head=128, fp16:
+برای مدل 7B با 32 لایه، 32 سر (همه برای K و V استفاده می شود) ، d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 برای Llama 3 70B (80 لایه، d_head=128, GQA با 8 سر KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-این 10 گیگابایت است که چرا Llama 3 70B در 128K زمینه نیاز به بیشتر از 40 گیگابایت A100 فقط برای KV حافظه در اندازه دسته 1.
+این 10 گیگابایت در 32K به 40 گیگابایت در 128K می رسد که کل یک A100 40 گیگابایت فقط برای KV در اندازه دسته 1 است.
 
-**GQA is the KV-cache win.**MHA با 64 سر 32 گيبايت است.
+**GQA is the KV-cache win.**MHA با 64 KV سر 8 برابر بزرگتر خواهد بود، حدود 80 GiB در 32K. MLA حتی بیشتر فشرده می شود.
 
 ابعاد را بکشید و اندازه حافظه پنهان را ببینید حرکت می کند. طول دنباله یا دسته را فشار دهید و ببینید که چقدر سریع آن را از طریق یک GPU عبور می کند:
 
@@ -123,6 +123,10 @@ flash-attention-memory
 ```
 
 ## آن را بسازید
+
+```figure
+iso-machine {"machine":"kv-cache"}
+```
 
 ببین`code/main.py`ما اجرا میکنیم:
 
