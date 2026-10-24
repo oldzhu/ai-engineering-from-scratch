@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Composer les onze leçons précédentes (tokenizer, données, pré-formation, mise à l'échelle, SFT, RLHF, DPO, CAI, évaluation, quantification, inférence) dans une seule spécification de pipeline reproduisable
+- Composer les douze leçons précédentes (deux leçons de jeton, données, pré-formation, mise à l'échelle, SFT, RLHF, DPO, CAI, évaluation, quantification, inférence) dans une seule spécification de pipeline reproduisable
 - Définir le contrat d'artéfact entre les étapes: ce que chaque étape consomme, ce qu'elle produit et comment la phase suivante vérifie l'entrée
 - Construisez un orchestrateur qui suit les expériences, hashes des artefacts et porte les décisions de l'expédition sur les seuils d'évaluation
 - Conception du plan de réouverture: quels objets sont bon marché à réutiliser, quels sont chers et quels sont les coûts d'un poste de contrôle corrompu
