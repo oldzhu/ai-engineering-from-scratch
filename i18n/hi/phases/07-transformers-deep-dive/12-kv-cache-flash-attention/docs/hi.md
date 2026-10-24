@@ -26,32 +26,32 @@
 
 ### KV कैश गणित
 
-प्रति डिकोडर परत, प्रति टोकन, प्रति सिरः
+प्रत्येक डिकोडर परत, प्रत्येक टोकन, सभी KV हेड परः
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-32 परतों, 32 सिरों, d_head=128, fp16 के साथ 7B मॉडल के लिएः
+32 परतों के साथ 7B मॉडल के लिए, 32 सिर (के और वी के लिए सभी उपयोग किए जाते हैं), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Llama 3 70B के लिए (80 परतें, d_head=128, GQA 8 KV heads के साथ):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-कि 10 GB है कि क्यों Llama 3 70B 128K संदर्भ में केवल केवी कैश के लिए 40 GB A100 के अधिकांश की जरूरत है बैच आकार 1 पर।
+32K पर 10 GiB बढ़कर 128K पर 40 GiB हो जाता है, जो बैच आकार 1 पर केवल KV कैश के लिए 40 GB A100 का पूरा है।
 
-**GQA is the KV-cache win.**64 हेड के साथ एमएचए 32 जीबी होगा। एमएलए और भी अधिक संपीड़ित करता है।
+**GQA is the KV-cache win.**64 केवी हेड वाला एमएचए 8 गुना बड़ा होगा, लगभग 80 जीबी 32K पर। एमएलए और भी अधिक संपीड़ित करता है।
 
 आयामों को खींचें और कैश आकार को आगे बढ़ते देखें। अनुक्रम की लंबाई या बैच को आगे बढ़ाएं और देखें कि यह एक एकल GPU से आगे कितनी तेजी से उड़ता हैः
 
@@ -123,6 +123,10 @@ flash-attention-memory
 ```
 
 ## इसे बनाओ
+
+```figure
+iso-machine {"machine":"kv-cache"}
+```
 
 देखो`code/main.py`हम लागू करते हैंः
 
