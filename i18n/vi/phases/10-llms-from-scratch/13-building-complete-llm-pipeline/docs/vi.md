@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Kết hợp 11 bài học trước đó (tokenizer, dữ liệu, đào tạo trước, quy mô, SFT, RLHF, DPO, CAI, đánh giá, định lượng, suy luận) thành một quy mô đường ống tái tạo duy nhất
+- Kết hợp mười hai bài học trước đó (hai bài học tokenizer, dữ liệu, đào tạo trước, quy mô, SFT, RLHF, DPO, CAI, đánh giá, định lượng, suy luận) thành một quy mô đường ống tái tạo duy nhất
 - Định nghĩa hợp đồng tạo vật giữa các giai đoạn: mỗi giai đoạn tiêu thụ gì, nó sản xuất gì và cách giai đoạn tiếp theo xác minh đầu vào
 - Xây dựng một trình dàn nhạc theo dõi các thí nghiệm, hash các hiện vật, và cửa đóng các quyết định trên ngưỡng đánh giá
 - Thiết kế kế kế hoạch quay lại: những đồ tạo vật nào rẻ để tái sử dụng, đắt tiền, và chi phí của một điểm kiểm soát bị hỏng
