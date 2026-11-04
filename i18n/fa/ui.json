@@ -195,7 +195,12 @@
     "Define “intelligence”.": "«هوش» را تعریف کنید.",
     "A good place to start.": "جای خوبی برای شروع.",
     "Still worth learning backprop.": "یادگیری پس‌انتشار هنوز ارزش دارد.",
-    "Some questions are best answered by building.": "پاسخ بعضی پرسش‌ها را بهتر است با ساختن پیدا کنید."
+    "Some questions are best answered by building.": "پاسخ بعضی پرسش‌ها را بهتر است با ساختن پیدا کنید.",
+    "Change theme": "موضوع را تغییر دهید",
+    "Theme": "موضوع",
+    "System": "سیستم",
+    "Light": "نور",
+    "Dark": "تاریک"
   },
   "pinned": [
     "Skip to content",
