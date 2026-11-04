@@ -195,7 +195,12 @@
     "Define “intelligence”.": "تعريف \"المعلومات\"",
     "A good place to start.": "مكان جيد للبدء",
     "Still worth learning backprop.": "لا يزال يستحق تعلم الدوام",
-    "Some questions are best answered by building.": "بعض الأسئلة يجيبها بشكل أفضل من خلال البناء."
+    "Some questions are best answered by building.": "بعض الأسئلة يجيبها بشكل أفضل من خلال البناء.",
+    "Change theme": "تغيير الموضوع",
+    "Theme": "الموضوع",
+    "System": "النظام",
+    "Light": "الضوء",
+    "Dark": "مظلم"
   },
   "pinned": [
     "Skip to content",
