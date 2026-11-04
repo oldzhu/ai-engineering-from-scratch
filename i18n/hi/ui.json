@@ -195,7 +195,12 @@
     "Define “intelligence”.": "उपदेशन  को परिभाषित करें।",
     "A good place to start.": "शुरू करने के लिए एक अच्छी जगह.",
     "Still worth learning backprop.": "अभी भी बैकपॉड सीखने लायक है।",
-    "Some questions are best answered by building.": "कुछ प्रश्नों के उत्तर सबसे अच्छा निर्माण से मिलते हैं।"
+    "Some questions are best answered by building.": "कुछ प्रश्नों के उत्तर सबसे अच्छा निर्माण से मिलते हैं।",
+    "Change theme": "विषय परिवर्तन",
+    "Theme": "विषय",
+    "System": "प्रणाली",
+    "Light": "प्रकाश",
+    "Dark": "अंधेरा"
   },
   "pinned": [
     "Skip to content",
