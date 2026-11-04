@@ -195,7 +195,12 @@
     "Define “intelligence”.": "Définir l'intelligence.",
     "A good place to start.": "C'est un bon point de départ.",
     "Still worth learning backprop.": "Ça vaut la peine d'apprendre à se remettre.",
-    "Some questions are best answered by building.": "Certaines questions sont mieux répondues en construisant."
+    "Some questions are best answered by building.": "Certaines questions sont mieux répondues en construisant.",
+    "Change theme": "Modifier le thème",
+    "Theme": "Thème",
+    "System": "Système",
+    "Light": "Lumière",
+    "Dark": "Les ténèbres"
   },
   "pinned": [
     "Skip to content",
