@@ -195,7 +195,12 @@
     "Define “intelligence”.": "請定義「智慧」。",
     "A good place to start.": "一個好的起點。",
     "Still worth learning backprop.": "反向傳播仍然值得學習。",
-    "Some questions are best answered by building.": "有些問題，動手實作就是最好的回答。"
+    "Some questions are best answered by building.": "有些問題，動手實作就是最好的回答。",
+    "Change theme": "改變主題",
+    "Theme": "題目",
+    "System": "系統",
+    "Light": "燈光",
+    "Dark": "黑暗的時間"
   },
   "pinned": [
     "Skip to content",
